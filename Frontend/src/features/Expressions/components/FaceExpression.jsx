@@ -10,7 +10,6 @@ export default function FaceExpression({ onClick = () => {} }) {
 
   useEffect(() => {
     init({ landmarkerRef, videoRef, streamRef });
-
     return () => {
       if (landmarkerRef.current) {
         landmarkerRef.current.close();
