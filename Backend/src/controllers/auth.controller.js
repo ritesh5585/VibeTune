@@ -1,11 +1,13 @@
 const userModel = require("../models/user.model")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-const blacklist = require("../models/blacklist.model")
 const { default: mongoose } = require("mongoose")
 const redis = require("../config/cache")
+const ApiError = require("../utils/ApiError")
+const ApiResponse = require("../utils/ApiResponse")
+const asyncHandler = require("../utils/asyncHandler")
 
-async function registerUser(req, res) {
+const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body
 
     const isUserAlreadyExists = await userModel.findOne({
@@ -16,9 +18,7 @@ async function registerUser(req, res) {
     })
 
     if (isUserAlreadyExists) {
-        return res.status(400).json({
-            message: "User already exist with email or username"
-        })
+        throw new ApiError(400, "User already exist with email or username")
     }
 
     const hash = await bcrypt.hash(password, 10)
@@ -42,17 +42,14 @@ async function registerUser(req, res) {
 
     res.cookie("token", token)
 
-    return res.status(201).json({
-        message: " User registered successfully",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-        }
-    })
-}
+    return res.status(201).json(new ApiResponse(201, {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+    }, "User registered successfully"))
+})
 
-async function loginUser(req, res) {
+const loginUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body
 
     const user = await userModel.findOne({
@@ -61,18 +58,15 @@ async function loginUser(req, res) {
             { username }
         ]
     }).select("+password")
+
     if (!user) {
-        return res.status(400).json({
-            message: " user not availble please register to login"
-        })
+        throw new ApiError(404, "User not available please register to login")
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if (!isPasswordValid) {
-        return res.status(401).json({
-            message: " inavlif password"
-        })
+        throw new ApiError(401, "Invalid password")
     }
 
     const token = jwt.sign({
@@ -85,18 +79,14 @@ async function loginUser(req, res) {
 
     res.cookie("token", token)
 
-    return res.status(201).json({
-        message: " user logged in successfully",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
-        }
-    })
-}
+    return res.status(200).json(new ApiResponse(200, {
+        id: user._id,
+        username: user.username,
+        email: user.email
+    }, "User logged in successfully"))
+})
 
-async function logOutUser(req, res) {
-
+const logOutUser = asyncHandler(async (req, res) => {
     const token = req.cookies?.token
     
     res.cookie("token", "", {
@@ -104,32 +94,26 @@ async function logOutUser(req, res) {
         expires: new Date(0)
     });
 
-    await redis.set(token, Date.now().toString())
-
-    res.status(200).json({
-        message: "Loggout successfully"
-    });
-}
-
-async function getMe(req, res) {
-    try {
-        const user = await userModel.findById(req.user.id)
-
-        res.status(200).json({
-            message: " user fetched successfully",
-            user
-        })
-    } catch (err) {
-        res.status(500).json({
-            message: err.message
-        })
+    if (token) {
+        await redis.set(token, Date.now().toString())
     }
-}
+
+    res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
+})
+
+const getMe = asyncHandler(async (req, res) => {
+    const user = await userModel.findById(req.user.id)
+
+    if (!user) {
+        throw new ApiError(404, "User not found")
+    }
+
+    res.status(200).json(new ApiResponse(200, user, "User fetched successfully"))
+})
 
 module.exports = {
     registerUser,
     loginUser,
     logOutUser,
     getMe,
-
 }

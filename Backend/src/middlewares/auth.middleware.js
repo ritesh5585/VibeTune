@@ -1,23 +1,19 @@
 const userModel = require("../models/user.model")
-const blacklist = require("../models/blacklist.model")
 const jwt = require("jsonwebtoken")
 const redis = require("../config/cache")
+const ApiError = require("../utils/ApiError")
+const asyncHandler = require("../utils/asyncHandler")
 
-async function authUser(req, res, next) {
-    console.log(req.cookies)
+const authUser = asyncHandler(async (req, res, next) => {
     const token = req.cookies.token
 
     if (!token) {
-        return res.status(401).json({
-            message: "Token not found"
-        })
+        throw new ApiError(401, "Token not found")
     }
     const isTokenBlacklistted = await redis.get(token)
 
     if(isTokenBlacklistted){
-        return res.status(401).json({
-            message: "invalid token or already exist"
-        })
+        throw new ApiError(401, "Invalid token or already logged out")
     }
 
     try {
@@ -30,9 +26,9 @@ async function authUser(req, res, next) {
 
         next()
     } catch (error) {
-        console.log("invalid token from middleware", error)
+        throw new ApiError(401, "Invalid or expired token")
     }
-}
+})
 
 module.exports = {
     authUser
