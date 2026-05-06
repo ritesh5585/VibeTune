@@ -1,41 +1,37 @@
-const recommendationServices = require("../services/recommendation.service")
+const { detectMood } = require("../services/recommendation.service")
 const userModel = require("../models/user.model")
 
 async function getRecommendation(req, res) {
+
     try {
+
         const { mood } = req.body
-        const userId = req.user?.id
 
-        if (!mood) return res.status(400).json({
-            success: false,
-            message: " mood is required"
-        })
+        if (!mood) return res.status(400).json({ message: "Mood is requied" })
 
-        const songs = await recommendationServices.detectMood(mood)
+        const songs = await detectMood(mood, req.user)
 
-        if (userId && songs.length > 0) {
-            await userModel.findByIdAndUpdate(userId, {
-                $push: {
-                    history: {  
-                        mood,
-                        songId: songs[0]._id, // save first recommended song
-                        playedAt: new Date(),
-                    },
-                },
+        if (!songs || songs.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No songs found for this mood'
             });
         }
 
-
-        return res.status(200).json({
+        res.json({
             success: true,
-            message: "done",
-            songs
-        })
-    } catch (err) {
-        return res.status(500).json({
-            message: err.message
-        })
+            mood,
+            songs: songs.map(s => ({
+                title: s.title,
+                youtubeId: s.youtubeId,
+                channel: s.channel,
+            })),
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
+
 }
 
 module.exports = {

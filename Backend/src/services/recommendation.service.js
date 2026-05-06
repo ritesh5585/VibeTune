@@ -1,15 +1,40 @@
 const songModels = require("../models/songs.model")
+const { searchYouTube } = require("./youtube.service")
 
-async function detectMood(mood) {
+async function detectMood(mood, user = null) {
 
-    const song = await songModels.find({ mood })
+    try {
 
-    if (!song.length) return await songModels.find().limit(3)
+        let songs = await songModels.find({ mood }).limit(5)
 
-    const shuffled = song.sort(() => 0.5 - Math.random())
+        if (songs.length == 0) {
+            const youtubeResults = await searchYouTube(mood)
 
-    return shuffled(0, 3)
+            if (youtubeResults) {
+                songs = youtubeResults.map(video => ({
+                    title: video.title,
+                    youtubeId: video.videoId,
+                    mood: mood,
+                    source: 'youtube',
+                }));
+
+                // Filter recent songs
+                if (user?.history?.length) {
+                    const recent = user.history.slice(-5).map(h => h.songId?.toString());
+                    songs = songs.filter(s => !recent.includes(s._id?.toString()));
+                }
+
+                return songs.sort(() => 0.5 - Math.random()).slice(0, 3);
+            }
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        return await Song.find().limit(3);
+    }
+
 }
+
 module.exports = {
     detectMood
 }

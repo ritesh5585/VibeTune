@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { detect, init } from "../utlis/utlis.js";
-import { getRandomSong } from "../utlis/songMap.js";
+// import { getRandomSong } from "../utlis/songMap.js";
 import Player from "./Player.jsx";
 import "../../shared/FaceExpression.css";
+import { useRecommendation } from "../hooks/useRecommendation.js";
 
 /**
  * MOOD CONFIG
@@ -15,8 +16,10 @@ const MOOD_CONFIG = {
   neutral: { emoji: "😐", label: "Neutral" },
 };
 
-const DETECTION_INTERVAL = 600; // ms between each detection frame
-const HISTORY_SIZE = 5; // number of frames for majority vote
+const { songs, fetchSongs } = useRecommendation();
+
+const DETECTION_INTERVAL = 600;
+const HISTORY_SIZE = 5;
 
 export default function FaceExpression() {
   // ── Refs (don't trigger re-renders) ──
@@ -32,11 +35,6 @@ export default function FaceExpression() {
   const [stableMood, setStableMood] = useState(null); // After majority vote
   const [videoId, setVideoId] = useState(null);
 
-  /**
-   * MAJORITY VOTE
-   * Takes the history array, counts occurrences, returns the most frequent mood.
-   * This prevents flickering: e.g. [happy, happy, neutral, happy, happy] → "happy"
-   */
   const getMajorityMood = useCallback((history) => {
     if (history.length < HISTORY_SIZE) return null;
 
@@ -51,10 +49,6 @@ export default function FaceExpression() {
     )[0];
   }, []);
 
-  /**
-   * EFFECT 1: Initialize camera + model on mount
-   * Runs once. Cleanup stops camera + closes model.
-   */
   useEffect(() => {
     init({ landmarkerRef, videoRef, streamRef }, setReady, setError);
 
@@ -66,15 +60,6 @@ export default function FaceExpression() {
     };
   }, []);
 
-  /**
-   * EFFECT 2: Detection loop (only runs when model is ready)
-   *
-   * Every 600ms:
-   *   1. Call detect() → get raw expression string
-   *   2. Push into history buffer (capped at 5)
-   *   3. Run majority vote → stableMood
-   *   4. If stableMood changed → pick a new random song
-   */
   useEffect(() => {
     if (!ready) return;
 
@@ -84,41 +69,44 @@ export default function FaceExpression() {
       if (exp) {
         setExpression(exp);
 
-        // Update history buffer
         const updated = [...historyRef.current, exp].slice(-HISTORY_SIZE);
         historyRef.current = updated;
 
-        // Only run vote when buffer is full
         const voted = getMajorityMood(updated);
         if (voted) {
           setStableMood((prev) => {
             if (prev === voted) return prev; // Same mood → no update
             console.log(`🎵 Mood changed: ${prev} → ${voted}`);
-            setVideoId(getRandomSong(voted)); // New mood → new song
+            fetchSongs(voted);
             return voted;
           });
         }
       }
     }, DETECTION_INTERVAL);
 
+    useEffect(() => {
+      if (songs.length > 0) {
+        const randomSong = songs[Math.floor(Math.random() * songs.length)];
+        setVideoId(randomSong.youtubeId);
+      }
+    }, [songs]);
+
     return () => clearInterval(interval);
   }, [ready, getMajorityMood]);
 
-  // ── Render ──
-
   // Error state: camera denied or model failed
-  // if (error) {
-  //   return (
-  //     <div className="moodify-container">
-  //       <div className="moodify-card">
-  //         <div className="error-box">
-  //           <span className="error-icon">⚠️</span>
-  //           <p>{error}</p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (error) {
+    return (
+      <div className="moodify-container">
+        <div className="moodify-card">
+          <div className="error-box">
+            <span className="error-icon">⚠️</span>
+            <p>{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const mood = stableMood ? MOOD_CONFIG[stableMood] : null;
 
