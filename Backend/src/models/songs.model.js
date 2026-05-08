@@ -1,23 +1,42 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose');
 
 const songSchema = new mongoose.Schema({
+    videoId: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true,
+    },
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
     },
-    youtubeId: {
+    channel: {
         type: String,
-        required: true
+        default: 'Unknown',
     },
-    genre: {
+    thumbnail: {
         type: String,
+        default: null,
     },
     mood: {
         type: String,
-        required: true
-    }
-})
+        required: true,
+        enum: ['happy', 'sad', 'neutral', 'angry', 'romantic', 'energetic', 'surprised', 'anxious'],
+        index: true,
+    },
+    source: {
+        type: String,
+        default: 'youtube',
+    },
+    playCount: {
+        type: Number,
+        default: 0,
+    },
+}, { timestamps: true });
 
-const songModel = mongoose.model("songs", songSchema)
+const songModel = mongoose.model('Song', songSchema);
+
 
 module.exports = songModel

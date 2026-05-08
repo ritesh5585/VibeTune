@@ -94,7 +94,7 @@ body {
   gap: var(--spacing-xl);
   max-width: 1400px;
   width: 100%;
-  height: 90vh;
+  height: 96vh;
   align-items: stretch;
 }
 
@@ -150,7 +150,7 @@ body {
 
 /* ── Card Header ── */
 .card-header {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-sm);
   text-align: center;
   border-bottom: 1px solid var(--glass-border);
   background: rgba(255, 255, 255, 0.02);
@@ -468,8 +468,10 @@ body {
 
 /* ── Main Player Section ── */
 .main-player-section {
-  margin-top: auto;
+  margin-left: 150px;
   flex-shrink: 0;
+  width: 320px;
+  
 }
 
 .player-placeholder {
@@ -483,6 +485,7 @@ body {
   border: 1px dashed rgba(255, 255, 255, 0.1);
   text-align: center;
   transition: all var(--transition-normal);
+  
 }
 
 .player-placeholder:hover {
@@ -588,6 +591,9 @@ body {
   
   .camera-feed {
     height: 160px;
+  }
+  .main-player-section{
+    margin-left: 14px;
   }
 }
 
@@ -997,69 +1003,16 @@ body {
 
 /* ── Video Player Section ── */
 .video-player {
-  height: 300px;
+  height: 200px;
   background: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   border-top: 1px solid var(--glass-border);
 }
-
-.video-container {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-.video-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: var(--radius-md);
-}
-
-.playing-overlay {
-  position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-md);
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-xs);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
-.video-container:hover .playing-overlay {
-  opacity: 1;
-}
-
-.playing-animation {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.playing-animation span {
-  width: 3px;
-  height: 12px;
-  background: var(--accent-violet);
-  border-radius: 1px;
-  animation: playingBars 1s ease-in-out infinite;
-}
-
-.playing-animation span:nth-child(1) { animation-delay: 0s; }
-.playing-animation span:nth-child(2) { animation-delay: 0.2s; }
-.playing-animation span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes playingBars {
-  0%, 100% { transform: scaleY(0.3); }
-  50% { transform: scaleY(1); }
-}
-
 /* ── Now Playing Section ── */
 .now-playing {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-2xl);
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid var(--glass-border);
 }

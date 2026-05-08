@@ -74,7 +74,6 @@ const MoodPlayer = ({ songs = [], mood, loading = false }) => {
       {/* Header */}
       <div className="player-header">
         <div className="header-title">
-          <span className="mood-emoji">{moodData.emoji}</span>
           <h2 className="playlist-title">{moodData.label} Playlist</h2>
         </div>
         <div className="header-stats">
@@ -127,20 +126,20 @@ const MoodPlayer = ({ songs = [], mood, loading = false }) => {
                       )}
                     </div>
                     
-                    {song.thumbnail && (
-                      <div className="song-thumbnail">
-                        <img 
-                          src={song.thumbnail} 
-                          alt={song.title}
-                          loading="lazy"
-                        />
-                        {isActive && (
-                          <div className="now-playing-indicator">
-                            <span>♪</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      {song.thumbnail && (
+                        <div className="song-thumbnail">
+                          <img 
+                            src={song.thumbnail} 
+                            alt={song.title}
+                            loading="lazy"
+                          />
+                          {isActive && (
+                            <div className="now-playing-indicator">
+                              <span>♪</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     
                     <div className="song-info">
                       <p className="song-title">{song.title}</p>
@@ -171,28 +170,7 @@ const MoodPlayer = ({ songs = [], mood, loading = false }) => {
         {/* Video Player */}
         <div className="video-player">
           {safeCurrentSong ? (
-            <>
-              <div className="video-container">
-                <iframe
-                  key={safeCurrentSong.youtubeId}
-                  src={`https://www.youtube.com/embed/${safeCurrentSong.youtubeId}?autoplay=${isPlaying ? '1' : '0'}&rel=0&showinfo=0&controls=1`}
-                  className="video-iframe"
-                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  title="VibeTune Player"
-                  loading="lazy"
-                />
-                {isPlaying && (
-                  <div className="playing-overlay">
-                    <div className="playing-animation">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
+            
               <div className="now-playing">
                 <div className="track-info">
                   <h3 className="track-title">{safeCurrentSong.title}</h3>
@@ -223,7 +201,7 @@ const MoodPlayer = ({ songs = [], mood, loading = false }) => {
                   </button>
                 </div>
               </div>
-            </>
+    
           ) : (
             <div className="no-song-selected">
               <div className="empty-player">
