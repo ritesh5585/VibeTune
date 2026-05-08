@@ -1,16 +1,5 @@
 import { useState } from "react";
 
-/**
- * PLAYER COMPONENT
- *
- * Renders a YouTube iframe embed for the given videoId.
- *
- * Key decisions:
- *   - `key={videoId}` forces React to unmount/remount the iframe
- *     when the song changes. This triggers autoplay on the new video.
- *   - Fade-in via CSS opacity transition (no flicker).
- *   - Returns null if no videoId yet (nothing to play).
- */
 export default function Player({ videoId }) {
   const [loaded, setLoaded] = useState(false);
 

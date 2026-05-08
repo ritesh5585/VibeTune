@@ -1,15 +1,26 @@
 import React from "react";
 import { useAuth } from "../hooks/useAuth";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router-dom";
+import "../syles/auth.scss";
 
 const Protected = ({ children }) => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
 
-  if (loading) return <h1>Loading...</h1>;
+  if (loading) {
+    return (
+      <div className="auth-loading-container">
+        <div className="auth-loading-card">
+          <div className="spinner"></div>
+          <p>Loading your session...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!loading || !user) return <Navigate to="/login" />;
-
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  
   return children;
 };
 

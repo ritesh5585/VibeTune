@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import "../syles/login.scss";
 import FormGroup from "../components/FormGroup";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { loading, handleLogin } = useAuth();
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -15,40 +14,68 @@ const Login = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     await handleLogin({ email, password });
     navigate("/");
-    console.log("done");
   }
 
   return (
-    <main className="login-page">
-      <div className="form-container">
-        <h1>Login</h1>
-        <form onSubmit={handleSubmit}>
+    <div className="auth-container">
+      <div className="auth-background">
+        <div className="floating-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+          <div className="shape shape-3"></div>
+        </div>
+      </div>
+      
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="logo">
+            <span className="logo-icon">🎵</span>
+            <span className="logo-text">VibeTune</span>
+          </div>
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Sign in to continue your musical journey</p>
+        </div>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
           <FormGroup
             label="Email"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
+            type="email"
           />
+          
           <FormGroup
-            label="password"
+            label="Password"
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            placeholder=""
-            Enter
-            Your
-            Password
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            type="password"
           />
-          <button type="submit">Login</button>
+
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="button-content">
+                <span className="spinner"></span>
+                Signing in...
+              </span>
+            ) : (
+              "Sign In"
+            )}
+          </button>
         </form>
+
+        <div className="auth-footer">
+          <p>Don't have an account? <Link to="/register" className="auth-link">Sign up</Link></p>
+        </div>
       </div>
-    </main>
+    </div>
   );
 };
 

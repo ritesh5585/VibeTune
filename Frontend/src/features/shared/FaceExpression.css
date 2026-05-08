@@ -1,11 +1,10 @@
 
-/* ── Container: full-screen centered ── */
-.moodify-container {
-  min-height: 100vh;
+/* ── App Layout: Clean Two-Column Design ── */
+.app-layout {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
   background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
@@ -17,35 +16,72 @@
   100% { background-position: 0% 50%; }
 }
 
-/* ── Main Card: glassmorphism ── */
-.moodify-card {
+/* ── Left Section: Face Expression ── */
+.expression-section {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+.expression-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 600px;
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  padding: 2.5rem 2rem;
+  padding: 2.5rem;
   text-align: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: fit-content;
+  max-height: 90vh;
 }
 
-/* ── Title ── */
-.moodify-title {
+/* ── Right Section: Music Player ── */
+.music-section {
+  width: 400px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Card Header ── */
+.card-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.app-title {
   font-size: 2rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 0.25rem;
   letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .title-icon {
-  display: inline-block;
   animation: bounce 2s ease infinite;
 }
 
@@ -54,13 +90,35 @@
   50%      { transform: translateY(-4px); }
 }
 
-.moodify-subtitle {
+.app-subtitle {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.45);
-  margin-bottom: 2rem;
+  line-height: 1.4;
 }
 
-/* ── Loading Overlay ── */
+.logout-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: #fca5a5;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  transform: translateY(-1px);
+}
+
+/* ── Loading State ── */
 .loading-overlay {
   position: absolute;
   inset: 0;
@@ -90,14 +148,23 @@
   to { transform: rotate(360deg); }
 }
 
+/* ── Error State ── */
+.error-box {
+  padding: 2rem;
+  text-align: center;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
 /* ── Camera Section ── */
 .camera-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
 }
 
-.camera-ring {
+.camera-wrapper {
   position: relative;
   padding: 4px;
   border-radius: 16px;
@@ -112,19 +179,22 @@
   object-fit: cover;
   border-radius: 12px;
   background: #111;
-  transform: scaleX(-1); /* Mirror so it feels natural */
+  transform: scaleX(-1);
 }
 
-/* ── Mood Badge ── */
+/* ── Mood Section ── */
 .mood-section {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .mood-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.4rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
@@ -136,7 +206,6 @@
   font-size: 1.3rem;
 }
 
-/* Color-coded mood badges */
 .mood-happy {
   background: rgba(34, 197, 94, 0.15);
   color: #4ade80;
@@ -178,41 +247,14 @@
 }
 
 .raw-expression {
-  margin-top: 0.5rem;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.25);
   font-family: monospace;
 }
 
-/* ── Player Section ── */
-.player-section {
-  margin-top: 0.5rem;
-}
-
-.player-wrapper {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%; /* 16:9 aspect ratio */
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.player-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 12px;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.player-iframe.visible {
-  opacity: 1;
+/* ── Main Player ── */
+.main-player {
+  margin-top: auto;
 }
 
 .player-placeholder {
@@ -230,42 +272,331 @@
   margin-bottom: 0.5rem;
 }
 
-/* ── Error ── */
-.error-box {
-  padding: 2rem;
+/* ── Music Player Section (Always Open) ── */
+.music-player {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.player-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
-  color: #fca5a5;
+  flex-shrink: 0;
 }
 
-.error-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: 1rem;
+.player-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.error-box p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.6);
+.mood-icon {
+  font-size: 1.5rem;
 }
 
-/* ── Responsive ── */
-@media (max-width: 560px) {
-  .moodify-container {
+.player-subtitle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.player-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Song List ── */
+.song-list {
+  flex: 1;
+  overflow-y: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.song-list::-webkit-scrollbar {
+  display: none;
+}
+
+.song-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.song-list-header h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.song-count {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+}
+
+.songs {
+  padding: 0.5rem;
+}
+
+.song-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.25rem;
+}
+
+.song-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.song-item.active {
+  background: rgba(167, 139, 250, 0.1);
+  border-left: 2px solid #a78bfa;
+}
+
+.song-index {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+
+.playing-icon {
+  color: #a78bfa;
+  font-size: 0.8rem;
+}
+
+.song-thumbnail {
+  width: 48px;
+  height: 36px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.song-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-duration {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+
+/* ── Video Player Section ── */
+.video-player {
+  height: 300px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.video-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.now-playing {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.track-info {
+  margin-bottom: 0.75rem;
+}
+
+.track-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.play-btn {
+  background: linear-gradient(135deg, #a78bfa, #6366f1);
+  border-color: transparent;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+}
+
+.no-song-selected {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+  gap: 0.5rem;
+}
+
+.music-icon {
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+.no-song-selected p {
+  font-size: 0.85rem;
+}
+
+/* ── Responsive Design ── */
+@media (max-width: 1024px) {
+  .music-section {
+    width: 350px;
+  }
+  
+  .camera-feed {
+    width: 280px;
+    height: 210px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .expression-section {
+    height: 60vh;
     padding: 1rem;
   }
 
-  .moodify-card {
-    padding: 1.5rem 1rem;
-    border-radius: 18px;
+  .music-section {
+    width: 100%;
+    height: 40vh;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .expression-card {
+    padding: 1.5rem;
+    max-height: 100%;
+  }
+
+  .app-title {
+    font-size: 1.5rem;
   }
 
   .camera-feed {
-    width: 260px;
-    height: 195px;
+    width: 240px;
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .expression-section {
+    height: 65vh;
+    padding: 0.5rem;
   }
 
-  .moodify-title {
-    font-size: 1.6rem;
+  .music-section {
+    height: 35vh;
+  }
+
+  .expression-card {
+    padding: 1rem;
+  }
+
+  .app-title {
+    font-size: 1.3rem;
+  }
+
+  .app-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .camera-feed {
+    width: 200px;
+    height: 150px;
   }
 }

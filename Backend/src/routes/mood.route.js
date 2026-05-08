@@ -4,6 +4,6 @@ const { authUser } = require("../middlewares/auth.middleware")
 
 const router = express.Router()
 
-router.post("/recommend", authUser, getRecommendation)
+router.post("/recommend", getRecommendation)
 
-module.exports = router
+module.exports = router 

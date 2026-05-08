@@ -12,7 +12,7 @@ export const useRecommendation = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:5000/api/mood/recommend', {
+            const response = await fetch('http://localhost:3000/api/mood/recommend', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ mood }),
@@ -21,8 +21,7 @@ export const useRecommendation = () => {
             const data = await response.json();
             setSongs(data.songs || []);
 
-            // const data = await getRecommendations(mood);
-            // setSongs(data);
+            
         } catch (err) {
             console.error("API error:", err.message);
         } finally {

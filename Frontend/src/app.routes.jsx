@@ -9,9 +9,9 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <FaceExpression />
-      // <Protected>
-      // </Protected>
+      <Protected>
+        <FaceExpression />
+      </Protected>
     ),
   },
   {
