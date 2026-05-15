@@ -11,11 +11,17 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await handleLogin({ email, password });
-    navigate("/");
+    setError("");
+    const res = await handleLogin({ email, password });
+    if (res?.success) {
+      navigate("/");
+    } else {
+      setError(res?.message || "Login failed. Please check your credentials.");
+    }
   }
 
   return (
@@ -37,6 +43,8 @@ const Login = () => {
           <h1 className="auth-title">Welcome Back</h1>
           <p className="auth-subtitle">Sign in to continue your musical journey</p>
         </div>
+
+        {error && <div className="auth-error" style={{color: "red", textAlign: "center", marginBottom: "1rem"}}>{error}</div>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <FormGroup

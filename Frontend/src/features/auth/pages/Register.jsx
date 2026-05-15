@@ -12,11 +12,17 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await handleRegister({ email, password, username });
-    navigate("/");
+    setError("");
+    const res = await handleRegister({ email, password, username });
+    if (res?.success) {
+      navigate("/");
+    } else {
+      setError(res?.message || "Registration failed. Please try again.");
+    }
   }
 
   return (
@@ -38,6 +44,8 @@ const Register = () => {
           <h1 className="auth-title">Create Account</h1>
           <p className="auth-subtitle">Join us and start your musical journey</p>
         </div>
+
+        {error && <div className="auth-error" style={{color: "red", textAlign: "center", marginBottom: "1rem"}}>{error}</div>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <FormGroup

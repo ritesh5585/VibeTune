@@ -40,12 +40,19 @@ const registerUser = asyncHandler(async (req, res) => {
         }
     )
 
-    res.cookie("token", token)
+    const isProduction = process.env.NODE_ENV === "production"
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    })
 
     return res.status(201).json(new ApiResponse(201, {
         id: user._id,
         username: user.username,
         email: user.email,
+        token,
     }, "User registered successfully"))
 })
 
@@ -77,12 +84,19 @@ const loginUser = asyncHandler(async (req, res) => {
         { expiresIn: "3d" }
     )
 
-    res.cookie("token", token)
+    const isProduction = process.env.NODE_ENV === "production"
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
+    })
 
     return res.status(200).json(new ApiResponse(200, {
         id: user._id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        token,
     }, "User logged in successfully"))
 })
 
