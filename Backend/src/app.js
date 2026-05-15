@@ -1,6 +1,7 @@
 const express = require("express")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+let path = require("path")
 
 const authRoutes = require("./routes/auth.route")
 const songsRoutes = require("./routes/songs.route")
@@ -15,12 +16,12 @@ app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
 }))
+app.use(express.static(path.join(__dirname, "../public/dist")));
 
 app.use("/api/auth", authRoutes)
 app.use("/api/song", songsRoutes)
 app.use("/api/mood", moodRoutes)
 
-// Global Error Handler (must be the last middleware)
 app.use(errorHandler)
 
 module.exports = app
